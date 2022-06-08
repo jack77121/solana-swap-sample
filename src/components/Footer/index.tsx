@@ -1,14 +1,7 @@
 import styled from 'styled-components';
 
 const Footer = () => {
-  return (
-    <Layout>
-      @2022. Made by&nbsp;
-      <a href="mailto:jack77121@gmail.com" style={{ textDecoration: 'none', color: '#b9caf3' }}>
-        Jack
-      </a>
-    </Layout>
-  );
+  return <Layout>@2022.</Layout>;
 };
 
 export default Footer;

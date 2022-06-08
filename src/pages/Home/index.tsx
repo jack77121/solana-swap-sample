@@ -1,12 +1,15 @@
 import styled from 'styled-components';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import Swap from '../../components/Swap';
 
 const Home = () => {
   return (
     <Layout>
       <Header />
-      <BodyLayout>body</BodyLayout>
+      <BodyLayout>
+        <Swap />
+      </BodyLayout>
       <Footer />
     </Layout>
   );
@@ -23,9 +26,11 @@ const Layout = styled.div`
 
 const BodyLayout = styled.div`
   width: 100%;
-  flex-grow:1;
-  background-color: yellow;
+  flex-grow: 1;
+  background-color: white;
   display: flex;
-  box-sizing: border: box;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
   padding: 16px;
 `;
