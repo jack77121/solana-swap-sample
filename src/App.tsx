@@ -11,17 +11,20 @@ import { useWalletAccountChangeListeners } from './application/wallet/feature/us
 import useTokenListsLoader from './application/token/feature/useTokenListsLoader';
 import { useSwapAmountCalculator } from './application/swap/useSwapAmountCalculator';
 import useLiquidityInfoLoader from './application/liquidity/feature/useLiquidityInfoLoader';
+import { useSyncWithSolanaWallet } from './application/wallet/feature/useSyncWithSolanaWallet';
+import useInitBalanceRefresher from './application/wallet/feature/useBalanceRefresher';
 
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 const AppInit = () => {
-  console.log('hi');
   useConnectionInitialization();
   useTokenAccountsRefresher();
   useWalletAccountChangeListeners();
   useTokenListsLoader();
   useSwapAmountCalculator();
   useLiquidityInfoLoader();
+  useSyncWithSolanaWallet();
+  useInitBalanceRefresher();
   return null;
 };
 

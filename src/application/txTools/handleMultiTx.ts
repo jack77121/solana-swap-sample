@@ -72,7 +72,7 @@ export type MultiTxAction = (providedTools: {
     connection: Connection;
     owner: PublicKey;
     tokenAccounts: WalletStore['tokenAccounts'];
-    // allTokenAccounts: WalletStore['allTokenAccounts'];
+    allTokenAccounts: WalletStore['allTokenAccounts'];
   };
 }) => void;
 //#region ------------------- callbacks -------------------
@@ -187,6 +187,7 @@ export default async function handleMultiTx(
         const connection = useConnection.getState().connection;
         if (!connection) {
           useErrorMsg.setState({ msg: 'no rpc connection' });
+          console.warn('no rpc connection');
           return;
         }
 
@@ -202,16 +203,18 @@ export default async function handleMultiTx(
             baseUtils: { connection, owner: shadowWalletOwner, ...tokenAccountInfos },
           });
         } else {
-          const { tokenAccounts } = useWallet.getState();
+          const { tokenAccounts, allTokenAccounts } = useWallet.getState();
           if (!owner) {
             useErrorMsg.setState({ msg: 'wallet not connected' });
+            console.warn('wallet not connected');
             return;
           }
           await txAction({
             transactionCollector,
-            baseUtils: { connection, owner, tokenAccounts },
+            baseUtils: { connection, owner, tokenAccounts, allTokenAccounts },
           });
         }
+        console.log('before sendMultiTransactionAndLogAndRecord');
         const finalInfos = await sendMultiTransactionAndLogAndRecord({
           transactions: innerTransactions,
           txHistoryInfo: callbackCollection.txHistoryInfo,
@@ -228,7 +231,9 @@ export default async function handleMultiTx(
             signerkeyPair: options?.forceKeyPairs,
           },
         });
+        console.log('before sendMultiTransactionAndLogAndRecord - resolve');
         resolve(finalInfos);
+        console.log('after sendMultiTransactionAndLogAndRecord - resolve');
       } catch (error) {
         // const { logError } = useNotification.getState();
         // console.warn(error);
@@ -269,10 +274,11 @@ async function sendMultiTransactionAndLogAndRecord(options: {
       try {
         const txCallbackCollection = options.optionsCollection;
         // const allSignedTransactions = await options.payload.signAllTransactions(options.transactions)
+        console.log('before signAllTransactions');
         const allSignedTransactions = await (options.payload.signerkeyPair?.ownerKeypair // if have signer detected, no need signAllTransactions
           ? options.transactions
           : options.payload.signAllTransactions(options.transactions));
-
+        console.log('after signAllTransactions');
         const txids = [] as string[];
 
         // eslint-disable-next-line no-inner-declarations
@@ -325,32 +331,32 @@ async function sendMultiTransactionAndLogAndRecord(options: {
                 // logTxid(txid, `${options.txHistoryInfo?.[currentIndex]?.title ?? 'Action'} Confirmed`, {
                 //   isSuccess: true,
                 // });
-                // txCallbackCollection.txSuccess[currentIndex]?.({
-                //   ...callbackParams,
-                //   ...extraTxidInfo,
-                // });
-                // onSuccess?.();
+                txCallbackCollection.txSuccess[currentIndex]?.({
+                  ...callbackParams,
+                  ...extraTxidInfo,
+                });
+                onSuccess?.();
                 console.log(`txId: ${txid}, is confirmed`);
               },
               onTxError(callbackParams) {
-                // console.error(callbackParams.error);
-                // resolve({ allSuccess: false, txids });
+                console.error(callbackParams.error);
+                resolve({ allSuccess: false, txids });
                 // logError(
                 //   `${options.txHistoryInfo?.[currentIndex]?.title ?? 'Action'} Failed`
                 //   // `reason: ${JSON.stringify(callbackParams.error)}` // TEMPly no reason
                 // );
-                // txCallbackCollection.txError[currentIndex]?.({
-                //   ...callbackParams,
-                //   ...extraTxidInfo,
-                // });
+                txCallbackCollection.txError[currentIndex]?.({
+                  ...callbackParams,
+                  ...extraTxidInfo,
+                });
                 console.log(`txId: ${txid}, Error`);
               },
               onTxFinally(callbackParams) {
                 // const { addHistoryItem } = useTxHistory.getState();
-                // txCallbackCollection.txFinally[currentIndex]?.({
-                //   ...callbackParams,
-                //   ...extraTxidInfo,
-                // });
+                txCallbackCollection.txFinally[currentIndex]?.({
+                  ...callbackParams,
+                  ...extraTxidInfo,
+                });
                 // addHistoryItem({
                 //   status: callbackParams.type === 'error' ? 'fail' : callbackParams.type,
                 //   txid,

@@ -10,9 +10,11 @@ export async function attachRecentBlockhash(...transactions: Transaction[]) {
   const { owner } = useWallet.getState();
   if (!connection) {
     useErrorMsg.setState({ msg: 'connection is not ready, maybe RPC is collapsed now' });
+    return;
   }
   if (!owner) {
     useErrorMsg.setState({ msg: 'please connect a wallet' });
+    return;
   }
   for await (const transaction of transactions) {
     if (!transaction.recentBlockhash) {

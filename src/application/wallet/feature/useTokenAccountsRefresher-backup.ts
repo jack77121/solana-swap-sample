@@ -11,14 +11,14 @@ import {
   addWalletAccountChangeListener,
   removeWalletAccountChangeListener,
 } from './useWalletAccountChangeListeners';
-import { eq } from '../../../functions/numberish/compare';
+// import { eq } from '@/functions/numberish/compare';
 import { useSwap } from '../../../application/swap/useSwap';
-import useLiquidity from '../../../application/liquidity/useLiquidity';
+// import useLiquidity from '@/application/liquidity/useLiquidity'
 // import useFarms from '@/application/farms/useFarms'
 // import { usePools } from '@/application/pools/usePools'
-import { listToJSMap } from '../../../functions/format/listToMap';
-import toPubString from '../../../functions/format/toMintString';
-import { shakeFalsyItem } from '../../../functions/arrayMethods';
+// import { listToJSMap } from '@/functions/format/listToMap';
+// import toPubString from '@/functions/format/toMintString';
+// import { shakeFalsyItem } from '@/functions/arrayMethods';
 
 /** update token accounts will cause balance refresh */
 export default function useTokenAccountsRefresher(): void {
@@ -27,7 +27,7 @@ export default function useTokenAccountsRefresher(): void {
 
   const walletRefreshCount = useWallet((s) => s.refreshCount);
   const swapRefreshCount = useSwap((s) => s.refreshCount);
-  const liquidityRefreshCount = useLiquidity((s) => s.refreshCount);
+  // const liquidityRefreshCount = useLiquidity((s) => s.refreshCount)
   // both farms pages and stake pages
   // const farmRefreshCount = useFarms((s) => s.farmRefreshCount)
   // const poolRefreshCount = usePools((s) => s.refreshCount)
@@ -46,7 +46,7 @@ export default function useTokenAccountsRefresher(): void {
     owner,
     walletRefreshCount,
     swapRefreshCount,
-    liquidityRefreshCount,
+    // liquidityRefreshCount,
     // farmRefreshCount,
     // poolRefreshCount
   ]);
@@ -58,57 +58,63 @@ const fetchTokenAccounts = async (
   owner: PublicKey,
   options?: { noSecondTry?: boolean }
 ) => {
-  const { allTokenAccounts, tokenAccountRawInfos, tokenAccounts, nativeTokenAccount } =
-    await getRichWalletTokenAccounts({
-      connection,
-      owner: new PublicKey(owner),
-    });
+  const { tokenAccountRawInfos, tokenAccounts } = await getRichWalletTokenAccounts({
+    connection,
+    owner: new PublicKey(owner),
+  });
 
   //#region ------------------- diff -------------------
-  const pastTokenAccounts = listToJSMap(
-    useWallet.getState().allTokenAccounts,
-    (a) => toPubString(a.publicKey) ?? 'native'
-  );
-  const newTokenAccounts = listToJSMap(allTokenAccounts, (a) => toPubString(a.publicKey) ?? 'native');
-  const diffAccounts = shakeFalsyItem(
-    [...newTokenAccounts].filter(([accountPub, { amount: newAmount }]) => {
-      const pastAmount = pastTokenAccounts.get(accountPub)?.amount;
-      return !eq(newAmount, pastAmount);
-    })
-  );
-  const diffCount = diffAccounts.length;
-  const hasWalletTokenAccountChanged = diffCount >= 2;
+  // const pastTokenAccounts = listToJSMap(
+  //   useWallet.getState().allTokenAccounts,
+  //   (a) => toPubString(a.publicKey) ?? 'native'
+  // )
+  // const newTokenAccounts = listToJSMap(allTokenAccounts, (a) => toPubString(a.publicKey) ?? 'native')
+  // const diffAccounts = shakeFalsyItem(
+  //   [...newTokenAccounts].filter(([accountPub, { amount: newAmount }]) => {
+  //     const pastAmount = pastTokenAccounts.get(accountPub)?.amount
+  //     return !eq(newAmount, pastAmount)
+  //   })
+  // )
+  // const diffCount = diffAccounts.length
+  // const hasWalletTokenAccountChanged = diffCount >= 2
   //#endregion
 
-  if (options?.noSecondTry || hasWalletTokenAccountChanged || diffCount === 0) {
-    useWallet.setState({
-      tokenAccountRawInfos,
-      nativeTokenAccount,
-      tokenAccounts,
-      allTokenAccounts,
-    });
-  } else {
-    // try in 'finalized'
-    addWalletAccountChangeListener(
-      async () => {
-        const { allTokenAccounts, tokenAccountRawInfos, tokenAccounts, nativeTokenAccount } =
-          await getRichWalletTokenAccounts({
-            connection,
-            owner: new PublicKey(owner),
-          });
-        useWallet.setState({
-          tokenAccountRawInfos,
-          nativeTokenAccount,
-          tokenAccounts,
-          allTokenAccounts,
-        });
-      },
-      {
-        once: true,
-        lifetime: 'finalized',
-      }
-    );
-  }
+  // if (options?.noSecondTry || hasWalletTokenAccountChanged || diffCount === 0) {
+  //   useWallet.setState({
+  //     tokenAccountRawInfos,
+  //     nativeTokenAccount,
+  //     tokenAccounts,
+  //     allTokenAccounts
+  //   })
+  // } else {
+  //   // try in 'finalized'
+  //   addWalletAccountChangeListener(
+  //     async () => {
+  //       const { allTokenAccounts, tokenAccountRawInfos, tokenAccounts, nativeTokenAccount } =
+  //         await getRichWalletTokenAccounts({
+  //           connection,
+  //           owner: new PublicKey(owner)
+  //         })
+  //       useWallet.setState({
+  //         tokenAccountRawInfos,
+  //         nativeTokenAccount,
+  //         tokenAccounts,
+  //         allTokenAccounts
+  //       })
+  //     },
+  //     {
+  //       once: true,
+  //       lifetime: 'finalized'
+  //     }
+  //   )
+  // }
+
+  useWallet.setState({
+    tokenAccountRawInfos,
+    // nativeTokenAccount,
+    tokenAccounts,
+    // allTokenAccounts
+  });
 };
 
 /**  rich info of {@link getWalletTokenAccounts}'s return  */
