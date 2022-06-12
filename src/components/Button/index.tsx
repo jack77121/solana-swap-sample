@@ -3,10 +3,15 @@ import styled from 'styled-components';
 interface IButton {
   disabled?: boolean;
   title: string;
+  onClick?: React.MouseEventHandler;
 }
 
-const Button: React.FC<IButton> = ({ title, disabled = false }) => {
-  return <Layout disabled={disabled}>{title}</Layout>;
+const Button: React.FC<IButton> = ({ title, disabled = false, onClick }) => {
+  return (
+    <Layout disabled={disabled} onClick={onClick}>
+      {title}
+    </Layout>
+  );
 };
 
 export default Button;

@@ -1,16 +1,25 @@
 import styled from 'styled-components';
-import { list, IList } from '../../list';
+import { IList } from '../../list';
 import InputNumber from '../../../../components/Input/number';
+import { Numberish } from '../../../../types/constants';
 
 interface ITokenCard {
   title?: string;
   balance?: string;
   disabledInput?: boolean;
-  onChange?: Function;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
   token?: IList;
+  value?: Numberish;
 }
 
-const TokenCard: React.FC<ITokenCard> = ({ title, balance, disabledInput = false, onChange, token }) => {
+const TokenCard: React.FC<ITokenCard> = ({
+  title,
+  balance,
+  disabledInput = false,
+  onChange,
+  token,
+  value,
+}) => {
   return (
     <Layout>
       <Head>
@@ -22,7 +31,7 @@ const TokenCard: React.FC<ITokenCard> = ({ title, balance, disabledInput = false
           <img style={{ width: 30, height: 30 }} src={token!.logo} alt="token-logo" />
           <TokenName>{token?.name}</TokenName>
         </div>
-        <InputNumber disabled={disabledInput} />
+        <InputNumber disabled={disabledInput} value={value} onChange={onChange} />
       </Body>
     </Layout>
   );

@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "@babel/core": "^7.16.0",
+    "@colors/colors": "^1.5.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+    "@raydium-io/raydium-sdk": "^1.1.0-beta.2",
     "@solana/wallet-adapter-base": "^0.9.5",
     "@solana/wallet-adapter-react": "^0.15.5",
     "@solana/wallet-adapter-react-ui": "^0.9.7",
@@ -43,6 +45,7 @@
     "jest-resolve": "^27.4.2",
     "jest-watch-typeahead": "^1.0.0",
     "mini-css-extract-plugin": "^2.4.5",
+    "os-browserify": "^0.3.0",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^6.2.1",
@@ -66,10 +69,11 @@
     "terser-webpack-plugin": "^5.2.5",
     "typescript": "^4.4.2",
     "web-vitals": "^2.1.0",
-    "webpack": "^5.64.4",
+    "webpack": "^5.73.0",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "workbox-webpack-plugin": "^6.4.1",
+    "zustand": "^4.0.0-rc.1"
   },
   "scripts": {
     "start": "node scripts/start.js",
@@ -149,5 +153,12 @@
     "presets": [
       "react-app"
     ]
+  },
+  "resolutions": {
+    "//": "See https://github.com/facebook/create-react-app/issues/11773",
+    "react-error-overlay": "6.0.9"
+  },
+  "devDependencies": {
+    "react-error-overlay": "6.0.9"
   }
 }

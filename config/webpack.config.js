@@ -320,6 +320,7 @@ module.exports = function (webpackEnv) {
       fallback: {
         crypto: require.resolve('crypto-browserify'),
         stream: require.resolve('stream-browserify'),
+        os: require.resolve('os-browserify/browser'),
       },
     },
     module: {
@@ -706,6 +707,12 @@ module.exports = function (webpackEnv) {
             },
           },
         }),
+      new webpack.ProvidePlugin({
+        // Make a global `process` variable that points to the `process` package,
+        // because the `util` package expects there to be a global variable named `process`.
+        // Thanks to https://stackoverflow.com/a/65018686/14239942
+        process: 'process/browser',
+      }),
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter

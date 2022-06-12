@@ -1,11 +1,14 @@
 import styled from 'styled-components';
+import { Numberish } from '../../types/constants';
 
 interface IInputNumber {
   disabled?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  value?: Numberish;
 }
 
-const InputNumber: React.FC<IInputNumber> = ({ disabled = false }) => {
-  return <Input type="number" disabled={disabled} />;
+const InputNumber: React.FC<IInputNumber> = ({ disabled = false, onChange, value }) => {
+  return <Input type="number" disabled={disabled} onChange={onChange} value={value?.toString()} />;
 };
 
 export default InputNumber;
