@@ -245,7 +245,10 @@ export default async function handleMultiTx(
         //   txids: [],
         // });
         console.warn(error);
-        useErrorMsg.setState({ msg: 'handleMultiTx error' });
+        let preErrMsg = useErrorMsg((s) => s.msg);
+        if (!preErrMsg) {
+          useErrorMsg.setState({ msg: 'handleMultiTx error' });
+        }
       } finally {
         // nothing
       }
