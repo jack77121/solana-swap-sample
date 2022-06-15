@@ -97,6 +97,7 @@ const Swap = () => {
         value={reverse ? coin1Amount : coin2Amount}
         balance={reverse ? myBalance.sol : myBalance.ray}
       />
+      <div style={{ height: 32 }} />
       <Button title="Swap" onClick={txSwap} />
     </Card>
   );
