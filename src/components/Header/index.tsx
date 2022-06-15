@@ -4,7 +4,7 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 const Header = () => {
   return (
     <Layout>
-      <Title>Solana sample swap</Title>
+      <Title>Raydium sample swap</Title>
       <WalletMultiButton />
     </Layout>
   );
