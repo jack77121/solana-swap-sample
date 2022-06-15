@@ -11,12 +11,10 @@ import { deUITokenAmount } from '../token/utils/quantumSOL';
 import { useSwap } from './useSwap';
 
 import { shakeUndifindedItem } from '../../functions/arrayMethods';
-import { useErrorMsg } from '../err/useErrorMsg';
+import { useNotifyMsg } from '../err/useNotifyMsg';
 
 export default function txSwap() {
-  console.log('txSwap click');
   return handleMultiTx(async ({ transactionCollector, baseUtils: { connection, owner } }) => {
-    console.log('in handleMultiTx');
     const { checkWalletHasEnoughBalance, tokenAccountRawInfos } = useWallet.getState();
     const {
       coin1,
@@ -39,31 +37,31 @@ export default function txSwap() {
     const downCoinAmount = (directionReversed ? coin1Amount : coin2Amount) || '0';
 
     if (!(upCoinAmount && gt(upCoinAmount, 0))) {
-      useErrorMsg.setState({ msg: 'should input upCoin amount larger than 0' });
+      useNotifyMsg.setState({ msg: 'should input upCoin amount larger than 0' });
       return;
     }
 
     if (!(downCoinAmount && gt(downCoinAmount, 0))) {
-      useErrorMsg.setState({ msg: 'should input downCoin amount larger than 0' });
+      useNotifyMsg.setState({ msg: 'should input downCoin amount larger than 0' });
       return;
     }
     if (!(upCoin && gt(upCoinAmount, 0))) {
-      useErrorMsg.setState({ msg: 'select a coin in upper box' });
+      useNotifyMsg.setState({ msg: 'select a coin in upper box' });
       return;
     }
 
     if (!downCoin) {
-      useErrorMsg.setState({ msg: 'select a coin in lower box' });
+      useNotifyMsg.setState({ msg: 'select a coin in lower box' });
       return;
     }
 
     if (String(upCoin!.mint) === String(downCoin!.mint)) {
-      useErrorMsg.setState({ msg: 'should not select same mint' });
+      useNotifyMsg.setState({ msg: 'should not select same mint' });
       return;
     }
 
     if (!routes) {
-      useErrorMsg.setState({ msg: "can't find correct route" });
+      useNotifyMsg.setState({ msg: "can't find correct route" });
       return;
     }
 
@@ -72,27 +70,14 @@ export default function txSwap() {
 
     if (!checkWalletHasEnoughBalance(upCoinTokenAmount)) {
       console.warn(`not enough ${upCoin.symbol}, upCoinTokenAmount:`, upCoinTokenAmount);
-      useErrorMsg.setState({ msg: `not enough ${upCoin.symbol}` });
+      useNotifyMsg.setState({ msg: `not enough ${upCoin.symbol}` });
       return;
     }
     if (!routeType) {
-      useErrorMsg.setState({ msg: 'accidently routeType is undefined' });
+      useNotifyMsg.setState({ msg: 'accidently routeType is undefined' });
       return;
     }
     console.log('BEFORE MAKE TX');
-    console.log('make trade tx parms: ', {
-      connection,
-      routes,
-      routeType,
-      fixedSide: 'in', // TODO: currently  only fixed in
-      tokenAccountRawInfos: tokenAccountRawInfos,
-      userKeys: { tokenAccounts: tokenAccountRawInfos, owner },
-      upCoinTokenAmount: upCoinTokenAmount.toExact(),
-      downCoin: downCoin,
-      minReceived: minReceived?.toString(),
-      amountIn: deUITokenAmount(upCoinTokenAmount), // TODO: currently  only fixed upper side
-      amountOut: deUITokenAmount(toTokenAmount(downCoin, minReceived, { alreadyDecimaled: true })),
-    });
     const { setupTransaction, tradeTransaction } = await Trade.makeTradeTransaction({
       connection,
       routes,
@@ -104,12 +89,6 @@ export default function txSwap() {
     });
 
     console.log('setupTransaction: ', setupTransaction, ' tradeTransaction: ', tradeTransaction);
-    console.log(
-      'tx: ',
-      tradeTransaction?.transaction.feePayer?.toString(),
-      ' signer: ',
-      tradeTransaction?.signers[0].publicKey.toString()
-    );
     const signedTransactions = shakeUndifindedItem(
       await asyncMap([setupTransaction, tradeTransaction], (merged) => {
         if (!merged) return;

@@ -1,8 +1,8 @@
-import { useErrorMsg } from '../../application/err/useErrorMsg';
+import { useNotifyMsg } from '../../application/err/useNotifyMsg';
 import styled from 'styled-components';
 
 const ErrorMsg = () => {
-  const errorMsg = useErrorMsg((s) => s.msg);
+  const errorMsg = useNotifyMsg((s) => s.msg);
 
   return <Layout>{errorMsg}</Layout>;
 };

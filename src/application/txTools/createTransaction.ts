@@ -4,7 +4,6 @@ import { attachRecentBlockhash } from './attachRecentBlockhash';
 
 export const loadTransaction = async (payload: { transaction: Transaction; signers?: Signer[] }) => {
   const { transaction, signers } = payload;
-  console.log('in loadTransaction, tx: ', transaction, ' signer: ', signers);
 
   const signedTransaction = await partialSignTransacion(transaction, signers);
   return signedTransaction;
@@ -55,9 +54,7 @@ export const createTransactionCollector = (
 const partialSignTransacion = async (transaction: Transaction, signers?: Signer[]): Promise<Transaction> => {
   if (signers?.length) {
     await attachRecentBlockhash(transaction);
-    console.log('in partialSignTransacion, signer: ', signers);
     transaction.partialSign(...signers);
-    console.log('in partialSignTransacion, after partial sign');
     return transaction;
   }
   return transaction;

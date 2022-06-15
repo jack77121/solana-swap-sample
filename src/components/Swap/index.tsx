@@ -4,9 +4,7 @@ import TokenCard from './components/TokenCard';
 import { list } from './list';
 import ReverseIcon from '../../assets/images/msic-swap.svg';
 import Button from '../../components/Button';
-import styled from 'styled-components';
 import txSwap from '../../application/swap/txSwap';
-import { useErrorMsg } from '../../application/err/useErrorMsg';
 import { useCallback, useEffect } from 'react';
 import { useSwap } from '../../application/swap/useSwap';
 import useToken from '../../application/token/useToken';
@@ -15,7 +13,6 @@ import { RAYMint } from '../../application/token/utils/wellknownToken.config';
 import useWallet from '../../application/wallet/useWallet';
 
 const Swap = () => {
-  const errorMsg = useErrorMsg((s) => s.msg);
   const getToken = useToken((s) => s.getToken);
   const coin1 = useSwap((s) => s.coin1);
   const coin2 = useSwap((s) => s.coin2);
@@ -47,12 +44,10 @@ const Swap = () => {
   }, [coin2, coin1, getBalance, pureBalances, balances]);
 
   const onChangeCoin1 = useCallback((e: any) => {
-    console.log('coin1 input trigger');
     useSwap.setState({ coin1Amount: e.target.value });
   }, []);
 
   const onChangeCoin2 = useCallback((e: any) => {
-    console.log('coin2 input trigger');
     useSwap.setState({ coin2Amount: e.target.value });
   }, []);
 
@@ -102,21 +97,9 @@ const Swap = () => {
         value={reverse ? coin1Amount : coin2Amount}
         balance={reverse ? myBalance.sol : myBalance.ray}
       />
-      <ErrorMsg style={{ height: 32 }}>{errorMsg}</ErrorMsg>
       <Button title="Swap" onClick={txSwap} />
     </Card>
   );
 };
 
 export default Swap;
-
-const ErrorMsg = styled.div`
-  width: 100%;
-  min-height: 32px;
-  color: red;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 8px 0px;
-`;

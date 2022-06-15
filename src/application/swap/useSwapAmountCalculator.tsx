@@ -49,7 +49,6 @@ export function useSwapAmountCalculator() {
   // one for coin1Amount then it will change coin2Amount
   // changing coin2Amount will cause another calc
   useAsyncEffect(async () => {
-    console.log('here1');
     // pairInfo is not enough
     if (!upCoin || !downCoin || !connection) {
       useSwap.setState({
@@ -87,7 +86,6 @@ export function useSwapAmountCalculator() {
     }
 
     try {
-      console.log('here2, upcoin: ', upCoin, ' downcoin: ', downCoin);
       const calcResult = await calculatePairTokenAmount({
         upCoin,
         upCoinAmount,
@@ -208,7 +206,6 @@ async function calculatePairTokenAmount({
   const { routeRelated: jsonInfos } = await useLiquidity
     .getState()
     .findLiquidityInfoByTokenMint(upCoin.mint, downCoin.mint);
-  console.log('here3, jsonInfos :', jsonInfos);
   if (jsonInfos.length) {
     const key = jsonInfos.map((jsonInfo) => jsonInfo.id).join('-');
     const sdkParsedInfos = sdkParsedInfoCache.has(key)
@@ -224,13 +221,6 @@ async function calculatePairTokenAmount({
       poolInfo: sdkParsedInfos[idx],
     }));
 
-    console.log('params for getBestAmountOut: ', {
-      pools,
-      currencyOut: deUIToken(downCoin),
-      amountIn: deUITokenAmount(upCoinTokenAmount),
-      slippage: toPercent(slippageTolerance),
-    });
-
     const { amountOut, minAmountOut, executionPrice, currentPrice, priceImpact, routes, routeType, fee } =
       Trade.getBestAmountOut({
         pools,
@@ -238,19 +228,6 @@ async function calculatePairTokenAmount({
         amountIn: deUITokenAmount(upCoinTokenAmount),
         slippage: toPercent(slippageTolerance),
       });
-    console.log(
-      'get best amount out: { amountOut, minAmountOut, executionPrice, currentPrice, priceImpact, routes, routeType, fee }: ',
-      {
-        amountOut,
-        minAmountOut,
-        executionPrice,
-        currentPrice,
-        priceImpact,
-        routes,
-        routeType,
-        fee,
-      }
-    );
 
     const sdkParsedInfoMap = new Map(sdkParsedInfos.map((info) => [toPubString(info.id), info]));
     const choosedSdkParsedInfos = shakeUndifindedItem(
@@ -258,19 +235,7 @@ async function calculatePairTokenAmount({
     );
 
     const swapable = choosedSdkParsedInfos.every((info) => Liquidity.getEnabledFeatures(info).swap);
-    console.log('{ executionPrice, currentPrice, priceImpact, routes, routeType, fee }: ', {
-      executionPrice,
-      currentPrice,
-      priceImpact,
-      routes,
-      routeType,
-      swapable,
-      fee,
-      info: {
-        amountOut: toUITokenAmount(amountOut).toExact(),
-        minAmountOut: toUITokenAmount(minAmountOut).toExact(),
-      },
-    });
+
     return {
       executionPrice,
       currentPrice,

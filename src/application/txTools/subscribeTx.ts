@@ -1,5 +1,5 @@
 import useConnection from '../connection/useConnection';
-import { useErrorMsg } from '../err/useErrorMsg';
+import { useNotifyMsg } from '../err/useNotifyMsg';
 import { TxErrorInfo, TxFinalInfo, TxSuccessInfo } from './handleMultiTx';
 
 export interface SubscribeSignatureCallbacks {
@@ -11,7 +11,7 @@ export interface SubscribeSignatureCallbacks {
 export default function subscribeTx(txid: string, callbacks?: SubscribeSignatureCallbacks) {
   const { connection } = useConnection.getState();
   if (!connection) {
-    useErrorMsg.setState({ msg: `no rpc connection` });
+    useNotifyMsg.setState({ msg: `no rpc connection` });
     return;
   }
   connection.onSignature(

@@ -72,12 +72,9 @@ const useWallet = create<WalletStore>((set, get) => ({
   getBalance(target) {
     if (!target) return undefined;
     if (isQuantumSOL(target) && target.collapseTo === 'wsol') {
-      console.log('getBalance: wsol');
       return get().pureBalances[String(WSOLMint)];
     } else {
       const mint = isToken(target) ? String(target.mint) : String(target);
-      console.log('getBalance: mint = ', mint);
-      console.log('current balances: ', get().balances);
       return get().balances[mint];
     }
   },
@@ -91,7 +88,6 @@ const useWallet = create<WalletStore>((set, get) => ({
     }
   },
   checkWalletHasEnoughBalance(minBalance) {
-    console.log('in checkWalletHasEnoughBalance, minBalance: ', minBalance);
     if (!minBalance) return false;
     const userBalance = get().getBalance(minBalance.token);
     if (!userBalance) return false;

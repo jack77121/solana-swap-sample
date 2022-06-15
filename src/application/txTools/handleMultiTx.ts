@@ -15,7 +15,7 @@ import subscribeTx from './subscribeTx';
 import { mergeFunction } from '../../functions/merge';
 import { getRecentBlockhash } from './attachRecentBlockhash';
 import { getRichWalletTokenAccounts } from '../wallet/feature/useTokenAccountsRefresher';
-import { useErrorMsg } from '../err/useErrorMsg';
+import { useNotifyMsg } from '../err/useNotifyMsg';
 
 //#region ------------------- basic info -------------------
 export type TxInfo = {
@@ -186,7 +186,7 @@ export default async function handleMultiTx(
         const { signAllTransactions, owner } = useWallet.getState();
         const connection = useConnection.getState().connection;
         if (!connection) {
-          useErrorMsg.setState({ msg: 'no rpc connection' });
+          useNotifyMsg.setState({ msg: 'no rpc connection' });
           console.warn('no rpc connection');
           return;
         }
@@ -205,7 +205,7 @@ export default async function handleMultiTx(
         } else {
           const { tokenAccounts, allTokenAccounts } = useWallet.getState();
           if (!owner) {
-            useErrorMsg.setState({ msg: 'wallet not connected' });
+            useNotifyMsg.setState({ msg: 'wallet not connected' });
             console.warn('wallet not connected');
             return;
           }
@@ -245,9 +245,9 @@ export default async function handleMultiTx(
         //   txids: [],
         // });
         console.warn(error);
-        let preErrMsg = useErrorMsg((s) => s.msg);
+        let preErrMsg = useNotifyMsg((s) => s.msg);
         if (!preErrMsg) {
-          useErrorMsg.setState({ msg: 'handleMultiTx error' });
+          useNotifyMsg.setState({ msg: 'handleMultiTx error' });
         }
       } finally {
         // nothing
@@ -321,9 +321,10 @@ async function sendMultiTransactionAndLogAndRecord(options: {
               txid,
             });
             console.log(`txId: ${txid} has been sent`);
+            useNotifyMsg.setState({ msg: `txId: ${txid} has been sent`, type: 'info' });
 
             if (!txid) {
-              useErrorMsg.setState({ msg: 'something went wrong' });
+              useNotifyMsg.setState({ msg: 'something went wrong' });
               return;
             }
 
@@ -339,7 +340,7 @@ async function sendMultiTransactionAndLogAndRecord(options: {
                   ...extraTxidInfo,
                 });
                 onSuccess?.();
-                console.log(`txId: ${txid}, is confirmed`);
+                useNotifyMsg.setState({ msg: `txId: ${txid}, is confirmed`, type: 'success' });
               },
               onTxError(callbackParams) {
                 console.error(callbackParams.error);
@@ -353,6 +354,7 @@ async function sendMultiTransactionAndLogAndRecord(options: {
                   ...extraTxidInfo,
                 });
                 console.log(`txId: ${txid}, Error`);
+                useNotifyMsg.setState({ msg: `txId: ${txid}, Error`, type: 'danger' });
               },
               onTxFinally(callbackParams) {
                 // const { addHistoryItem } = useTxHistory.getState();
@@ -368,6 +370,7 @@ async function sendMultiTransactionAndLogAndRecord(options: {
                 //   description: txCallbackCollection.txHistoryInfo?.[currentIndex]?.description,
                 // });
                 console.log(`txId: ${txid}, finally`);
+                // useNotifyMsg.setState({ msg: `txId: ${txid}, Error`, type: 'danger' });
               },
             });
           } catch (err) {

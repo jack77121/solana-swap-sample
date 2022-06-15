@@ -1,5 +1,5 @@
 import { Connection, Transaction } from '@solana/web3.js';
-import { useErrorMsg } from '../err/useErrorMsg';
+import { useNotifyMsg } from '../err/useNotifyMsg';
 
 import useConnection from '../connection/useConnection';
 import useWallet from '../wallet/useWallet';
@@ -9,11 +9,11 @@ export async function attachRecentBlockhash(...transactions: Transaction[]) {
   const { connection } = useConnection.getState();
   const { owner } = useWallet.getState();
   if (!connection) {
-    useErrorMsg.setState({ msg: 'connection is not ready, maybe RPC is collapsed now' });
+    useNotifyMsg.setState({ msg: 'connection is not ready, maybe RPC is collapsed now' });
     return;
   }
   if (!owner) {
-    useErrorMsg.setState({ msg: 'please connect a wallet' });
+    useNotifyMsg.setState({ msg: 'please connect a wallet' });
     return;
   }
   for await (const transaction of transactions) {
