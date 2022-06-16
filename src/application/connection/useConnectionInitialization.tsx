@@ -72,7 +72,7 @@ export default function useConnectionInitialization() {
 
         const selectedEndpointUrl = await caculateEndpointUrlByRpcConfig(data);
         const connection = new Connection(selectedEndpointUrl, 'confirmed');
-
+        console.log('selectedEndpointUrl rpc: ', selectedEndpointUrl);
         useConnection.setState((s) => ({
           availableEndPoints: unifyByKey([...data.rpcs, ...(s.availableEndPoints ?? [])], (i) => i.url),
           autoChoosedEndPoint: data.rpcs.find(({ url }) => url === selectedEndpointUrl),
