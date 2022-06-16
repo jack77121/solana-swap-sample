@@ -27,7 +27,7 @@ const devRpcConfig: Omit<Config, 'success'> = {
     // { url: 'https://arbirgis.rpcpool.com/', weight: 100 },
     // { url: 'https://solana-api.projectserum.com', weight: 100 }
     { name: 'beta-mainnet', url: 'https://api.mainnet-beta.solana.com/' },
-    { name: 'api.mainnet', url: 'https://api.mainnet.rpcpool.com/' },
+    // { name: 'api.mainnet', url: 'https://api.mainnet.rpcpool.com/' },
     { name: 'tt', url: 'https://solana-api.tt-prod.net' },
     { name: 'apricot', url: 'https://apricot-main-67cd.mainnet.rpcpool.com/' },
   ],
@@ -72,7 +72,8 @@ export default function useConnectionInitialization() {
 
         const selectedEndpointUrl = await caculateEndpointUrlByRpcConfig(data);
         const connection = new Connection(selectedEndpointUrl, 'confirmed');
-        console.log('selectedEndpointUrl rpc: ', selectedEndpointUrl);
+        console.log(`selectedEndpointUrl rpc: `, selectedEndpointUrl);
+        console.log(`currentEndPoint rpc: `, selectedEndpointUrl);
         useConnection.setState((s) => ({
           availableEndPoints: unifyByKey([...data.rpcs, ...(s.availableEndPoints ?? [])], (i) => i.url),
           autoChoosedEndPoint: data.rpcs.find(({ url }) => url === selectedEndpointUrl),
